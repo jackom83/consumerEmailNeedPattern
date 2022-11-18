@@ -2,30 +2,41 @@ import configparser
 import os
 import wget
 import csv
+from datetime import datetime
 
+parametersPath = './scr/parameters.cfg'
 
-#input
-mailList = ['rtd@istruzione.it','vincenzo.travascio@gmail.com']
+#example
+mailList = ['rtd@istruzione.it','vincenzo.travascio@gmail.com','sia.asprc@certificatamail.it']
 
 #output
 mailListOK = []
 mailListKO = []
 
-
 #set parameters
 config = configparser.ConfigParser()
-config.read('./scr/parameters.cfg')
+config.read(parametersPath)
 
-IPADatasetURL=config.get('downloadCSVRTD','IPADatasetURL')
-datasetLocation=config.get('downloadCSVRTD','datasetLocation')
+IPADatasetURL = config.get('downloadCSVRTD','IPADatasetURL')
+datasetLocation = config.get('downloadCSVRTD','datasetLocation')
+updateTime = datetime.strptime(config.get('downloadCSVRTD','updateTime'),'%Y-%m-%d') 
+
 
 #get IPA dataset and write on disk
-try:
-    os.remove(datasetLocation)
-except FileNotFoundError:
-    None
+nowdatetime = datetime.now()
 
-wget.download(IPADatasetURL, datasetLocation)
+if (nowdatetime - updateTime).days > 0:
+    try:
+        os.remove(datasetLocation)
+    except FileNotFoundError:
+        None
+   
+    config.set('downloadCSVRTD','updateTime', nowdatetime.strftime('%Y-%m-%d'))
+    
+    with open(parametersPath, 'w') as configfile:
+        config.write(configfile)
+
+    wget.download(IPADatasetURL, datasetLocation)
 
 #check mail
 with open(datasetLocation) as csv_file:
@@ -57,14 +68,19 @@ with open(datasetLocation) as csv_file:
                 elif mail_3 and mail_3 == mail:
                     mailListOK.append(mail)
                     mailList.remove(mail)
-                    break
-            
-            mailListKO = mailList
+                    break                        
 
             line_count += 1
 
+            if not mailList:
+                break
+
+    mailListKO = mailList
+
+#debug
 print('mailListOK = ' + str(mailListOK))
 print('mailListKO = ' + str(mailListKO))
+
 
     
 
