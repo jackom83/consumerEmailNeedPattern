@@ -54,19 +54,19 @@ with open(datasetLocation) as csv_file:
             
             for mail in mailList:
                 if mail_responsabile and mail_responsabile == mail:
-                    mailListOK.append({'codice_ipa':codice_ipa,'mail':mail})
+                    mailListOK.append(mail)
                     mailList.remove(mail)
                     break
                 elif mail_1 and mail_1 == mail:
-                    mailListOK.append({'codice_ipa':codice_ipa,'mail':mail})
+                    mailListOK.append(mail)
                     mailList.remove(mail)
                     break
                 elif mail_2 and mail_2 == mail:
-                    mailListOK.append({'codice_ipa':codice_ipa,'mail':mail})
+                    mailListOK.append(mail)
                     mailList.remove(mail)
                     break
                 elif mail_3 and mail_3 == mail:
-                    mailListOK.append({'codice_ipa':codice_ipa,'mail':mail})
+                    mailListOK.append(mail)
                     mailList.remove(mail)
                     break                        
 
