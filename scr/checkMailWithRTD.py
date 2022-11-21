@@ -75,7 +75,7 @@ with open(datasetLocation) as csv_file:
             if not mailList:
                 break
 
-    mailListKO = mailList
+mailListKO = mailList
 
 #debug
 print('mailListOK = ' + str(mailListOK))
