@@ -7,7 +7,7 @@ from datetime import datetime
 parametersPath = './scr/parameters.cfg'
 
 #example
-mailList = ['rtd@istruzione.it','vincenzo.travascio@gmail.com','sia.asprc@certificatamail.it']
+mailList = ['rtd@istruzione.it','prova@prova.pr','sia.asprc@certificatamail.it']
 
 #output
 mailListOK = []
