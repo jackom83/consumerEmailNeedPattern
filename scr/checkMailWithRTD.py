@@ -30,13 +30,13 @@ if (nowdatetime - updateTime).days > 0:
         os.remove(datasetLocation)
     except FileNotFoundError:
         None
-   
-    config.set('downloadCSVRTD','updateTime', nowdatetime.strftime('%Y-%m-%d'))
     
     with open(parametersPath, 'w') as configfile:
         config.write(configfile)
 
     wget.download(IPADatasetURL, datasetLocation)
+
+    config.set('downloadCSVRTD','updateTime', nowdatetime.strftime('%Y-%m-%d'))
 
 #check mail
 with open(datasetLocation) as csv_file:
