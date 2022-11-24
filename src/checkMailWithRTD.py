@@ -4,7 +4,7 @@ import wget
 import csv
 from datetime import datetime
 
-parametersPath = './scr/parameters.cfg'
+parametersPath = './src/parameters.cfg'
 
 #example
 mailList = ['rtd@istruzione.it','prova@prova.pr','sia.asprc@certificatamail.it']
