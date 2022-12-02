@@ -26,29 +26,15 @@ template_notify_ko = '''
 </div>
 '''
 
-template_response_subject = '[ModI-Governance] Reply-to: {} del {}'
-
-template_response_ok = '''
-<html>
-    <body>
-        <div style="padding: 2px 0px;">
-            <p>La comunicazione a mezzo PEC del <strong>{}</strong> avente oggetto: <strong>{}</strong> non &egrave; è stata presa in carico.</p>
-            <p>Per eventuali comunicazioni ulteriori in merito, sara utilizzato l'indirizzo mittente dalla comunicazione.            
-            <p>Grazie</p>
-        </div>
-    </body>
-</html>
-'''
+template_response_subject = '[ModI-Governance] Reply-to: {pec_sub} del {pec_when}'
 
 template_response_ko = '''
-<html>
-    <body>
-        <div style="padding: 2px 0px;">
-            <p>La comunicazione a mezzo PEC del <strong>{}</strong> avente oggetto: <strong>{}</strong> non &egrave; stata presa in carico.</p>
-            <p>L'indirizzo mittente <strong>{}</strong> non risulta essere un indirizzo di un RTD(Responsabile per la Transizione al Digitale) registrato in IPA (Indice dei domicili digitali delle Pubbliche Amministrazioni e dei Gestori di Pubblici Servizi)</p>
-            <p>Si prega di utilizzare un indirizzo di un RTD valido.</p>
-            <p>Grazie</p>
-        </div>
-    </body>
-</html>
+<div style="padding: 2px 0px;">
+    <p>La comunicazione a mezzo PEC del <strong>{pec_when}</strong> avente oggetto:</p> 
+    <p><strong>{pec_sub}</strong></p> 
+    <p>non &egrave; stata presa in carico.</p>
+    <p>L'indirizzo mittente <strong>{pec_from}</strong> non risulta essere un indirizzo di un RTD(Responsabile per la Transizione al Digitale) registrato in IPA (Indice dei domicili digitali delle Pubbliche Amministrazioni e dei Gestori di Pubblici Servizi)</p>
+    <p>Si prega di utilizzare un indirizzo di un RTD valido.</p>
+    <p>Grazie</p>
+</div>
 '''
