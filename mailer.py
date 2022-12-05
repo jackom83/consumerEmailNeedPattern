@@ -126,7 +126,7 @@ def send_mail_response(config: ConfigParser, smtp: smtplib.SMTP, mail_list_ok: L
 
         msg_content_ok = ''
         if len(mail_list_ok) > 0:
-            msg_content_ko = mt.template_notify_ko.format(
+            msg_content_ok = mt.template_notify_ok.format(
                 n=len(mail_list_ok),
                 msg_list=' '.join(
                     map(lambda x: '<li>From:' + x['from'] + ' at ' + x['when'].strftime('%Y-%m-%d')
