@@ -13,6 +13,8 @@ template_notify_ko = '''
             <ul>{msg_list}</ul> 
 </div>
 '''
+template_notify_row = '<li><b>From</b>: {pec_from} <b>at</b> {pec_when}, with <b>Subject</b>: {pec_sub}</li>'
+
 
 template_notify_end = '</div><p>Grazie</p></div>'
 

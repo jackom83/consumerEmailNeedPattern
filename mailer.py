@@ -119,25 +119,29 @@ def send_mail_response(config: ConfigParser, smtp: smtplib.SMTP, mail_list_ok: L
             msg_content_ko = mt.template_notify_ko.format(
                 n=len(mail_list_ko),
                 msg_list=' '.join(
-                    map(lambda x: '<li>From:' + x['from'] + 'at ' + x['when'].strftime('%Y-%m-%d')
-                                  + 'subject: ' + x['sub'] + '</li>', mail_list_ko)
-                    )
+                    map(lambda x: mt.template_notify_row.format(pec_from=x['from'],
+                                                                pec_when=x['when'].strftime('%Y-%m-%d'),
+                                                                pec_sub=x['sub']
+                                                                ), mail_list_ko)
                 )
+            )
 
         msg_content_ok = ''
         if len(mail_list_ok) > 0:
             msg_content_ok = mt.template_notify_ok.format(
                 n=len(mail_list_ok),
                 msg_list=' '.join(
-                    map(lambda x: '<li>From:' + x['from'] + ' at ' + x['when'].strftime('%Y-%m-%d')
-                                  + ' subject: ' + x['sub'] + '</li>', mail_list_ok)
+                    map(lambda x: mt.template_notify_row.format(pec_from=x['from'],
+                                                                pec_when=x['when'].strftime('%Y-%m-%d'),
+                                                                pec_sub=x['sub']
+                                                                ), mail_list_ko)
                 )
             )
 
         mail_message = mail_message_of(subject=mt.template_notify_subject,
                                        sender=config.get(CONF_SECTION, CONF_USER),
                                        recipient=config.get(CONF_SECTION, CONF_NOTIFY_LIST),
-                                       content=msg_content_ko+msg_content_ok+mt.template_notify_end)
+                                       content=msg_content_ko + msg_content_ok + mt.template_notify_end)
         smtp.send_message(mail_message)
 
 
