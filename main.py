@@ -43,7 +43,7 @@ if __name__ == '__main__':
             (ok_mail_list, ko_mail_list) = mailer.classify_mail(mail_list, rtd_mail_list)
 
         with mailer.smtp_open_connection(config_parser, args.password, verbose=args.verbose) as smtp_conn:
-            mailer.send_mail_response(config_parser, ok_mail_list, ko_mail_list, verbose=args.verbose)
+            mailer.send_mail_response(config_parser,smtp_conn, ok_mail_list, ko_mail_list, verbose=args.verbose)
 
     except (imaplib.IMAP4.error, OSError) as e:
         print(sys.exc_info()[1])

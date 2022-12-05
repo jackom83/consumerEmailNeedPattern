@@ -1,30 +1,21 @@
 
-template_notify_subject='[ModI-Governance]: Alert comunicazioni'
+template_notify_subject = '[ModI-Governance]: Alert comunicazioni'
 
-template_notify = '''
-<html>
-    <body>
-        <div>{}</div>
-        <div>{}</div>
-    </body>
-</html>       
-'''
-
-template_notify_ok='''
-<div style="padding: 2px 0px;display={}">
-    <p>Ci sono n. {} nuove comunicazioni provenienti da indirizzi di RTD validi, di seguito la lista con gli oggetti delle comunicazioni:            
-    <ul>{}</ul> 
-    <p>Grazie</p>
+template_notify_ok = '''
+<div style="padding: 2px 0px;">
+    <p>Rilevante n. {n} nuove comunicazioni provenienti da indirizzi di RTD validi, di seguito la lista con gli oggetti delle comunicazioni:            
+    <ul>{msg_list}</ul> 
 </div>
 '''
-
 template_notify_ko = '''
-<div style="padding: 2px 0px;display={}">
-            <p>Ci sono n. {} nuove comunicazioni scartate provenienti da indirizzi di RTD non validi, di seguito la lista con gli oggetti delle comunicazioni:
-            <ul>{}</ul> 
-            <p>Grazie</p>
+<div style="padding: 2px 0px;">        
+            <p>Rilevate n. {n} nuove comunicazioni scartate provenienti da indirizzi di RTD non validi, di seguito la lista con gli oggetti delle comunicazioni:
+            <ul>{msg_list}</ul> 
 </div>
 '''
+
+template_notify_end = '</div><p>Grazie</p></div>'
+
 
 template_response_subject = '[ModI-Governance] Reply-to: {pec_sub} del {pec_when}'
 

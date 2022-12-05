@@ -5,16 +5,18 @@ from configparser import ConfigParser
 from datetime import datetime
 from email.message import EmailMessage
 from email.parser import HeaderParser
+from functools import reduce
 from typing import List, Dict, Tuple
 
-import mailtemplate
+import mailtemplate as mt
 
-CONF_SECTION = 'pec'
+CONF_SECTION = 'mailer'
 CONF_IMAP_HOST = 'imap_host'
 CONF_IMAP_PORT = 'imap_port'
 CONF_SMTP_HOST = 'smtp_host'
 CONF_SMTP_PORT = 'smtp_port'
 CONF_USER = 'user'
+CONF_NOTIFY_LIST = 'notify_receipt_list'
 
 
 def smtp_open_connection(config: ConfigParser, pec_pass: str, verbose: bool = False) -> smtplib.SMTP:
@@ -96,21 +98,47 @@ def send_mail_response(config: ConfigParser, smtp: smtplib.SMTP, mail_list_ok: L
             print('From:', m['from'], 'Date:', m['when'], 'Subject:', m['sub'])
 
     for m in mail_list_ko:
-        msg_subject = mailtemplate.template_response_subject.format(pec_when=datetime.strptime(m['when'], '%Y-%m-%d'),
-                                                                    pec_sub=m['sub']
-                                                                    )
-        msg_content = mailtemplate.template_response_ko.format(pec_when=datetime.strptime(m['when'], '%Y-%m-%d'),
-                                                               pec_sub=m['sub'],
-                                                               pec_from=m['from']
-                                                               )
+        msg_subject = mt.template_response_subject.format(pec_when=m['when'].strftime('%Y-%m-%d'),
+                                                          pec_sub=m['sub']
+                                                          )
+        msg_content = mt.template_response_ko.format(pec_when=m['when'].strftime('%Y-%m-%d'),
+                                                     pec_sub=m['sub'],
+                                                     pec_from=m['from']
+                                                     )
         mail_message = mail_message_of(subject=msg_subject,
                                        sender=config.get(CONF_SECTION, CONF_USER),
                                        recipient=m['from'],
                                        content=msg_content)
+        smtp.send_message(mail_message)
 
+    # check notify
+    if (mail_list_ok and len(mail_list_ok) > 0) or (mail_list_ko and len(mail_list_ko) > 0):
 
+        msg_content_ko = ''
+        if len(mail_list_ko) > 0:
+            msg_content_ko = mt.template_notify_ko.format(
+                n=len(mail_list_ko),
+                msg_list=' '.join(
+                    map(lambda x: '<li>From:' + x['from'] + 'at ' + x['when'].strftime('%Y-%m-%d')
+                                  + 'subject: ' + x['sub'] + '</li>', mail_list_ko)
+                    )
+                )
 
-    pass
+        msg_content_ok = ''
+        if len(mail_list_ok) > 0:
+            msg_content_ko = mt.template_notify_ko.format(
+                n=len(mail_list_ok),
+                msg_list=' '.join(
+                    map(lambda x: '<li>From:' + x['from'] + ' at ' + x['when'].strftime('%Y-%m-%d')
+                                  + ' subject: ' + x['sub'] + '</li>', mail_list_ok)
+                )
+            )
+
+        mail_message = mail_message_of(subject=mt.template_notify_subject,
+                                       sender=config.get(CONF_SECTION, CONF_USER),
+                                       recipient=config.get(CONF_SECTION, CONF_NOTIFY_LIST),
+                                       content=msg_content_ko+msg_content_ok+mt.template_notify_end)
+        smtp.send_message(mail_message)
 
 
 def mail_message_of(subject: str, sender: str, recipient: str, content: str) -> EmailMessage:
