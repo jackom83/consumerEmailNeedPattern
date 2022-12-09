@@ -37,13 +37,28 @@ if __name__ == '__main__':
         # Read IPA RTD Mails
         rtd_mail_list = ipartd.ipa_valid_rtd_addr(config_parser, test_mode=args.testmode, verbose=args.verbose)
 
+
+
         # Fetch & Classify Mail Unseen
         with mailer.imap_open_connection(config_parser, args.password, verbose=args.verbose) as imap_conn:
             mail_list = mailer.fetch_unseen_mail(imap_conn)
+
+            #Purge Workerd
+            worked_msg = mailer.worked_messages(config_parser)
+            for wm in worked_msg:
+                for m in mail_list:
+                    if m['message-id'] == wm.rstrip('\n'):
+                        mail_list.remove(m)
+
             (ok_mail_list, ko_mail_list) = mailer.classify_mail(mail_list, rtd_mail_list)
 
         with mailer.smtp_open_connection(config_parser, args.password, verbose=args.verbose) as smtp_conn:
             mailer.send_mail_response(config_parser,smtp_conn, ok_mail_list, ko_mail_list, verbose=args.verbose)
+
+        mailer.save_worked_messages(config_parser,
+                                    list(msg['message-id'] for msg in ok_mail_list) +
+                                    list(msg['message-id'] for msg in ko_mail_list)
+                                    )
 
     except (imaplib.IMAP4.error, OSError) as e:
         print(sys.exc_info()[1])

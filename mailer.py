@@ -1,5 +1,6 @@
 import email.utils
 import imaplib
+import os.path
 import smtplib
 from configparser import ConfigParser
 from datetime import datetime
@@ -17,6 +18,7 @@ CONF_SMTP_HOST = 'smtp_host'
 CONF_SMTP_PORT = 'smtp_port'
 CONF_USER = 'user'
 CONF_NOTIFY_LIST = 'notify_receipt_list'
+CONF_MSG_WORKED_LOC = 'message_worked_location'
 
 
 def smtp_open_connection(config: ConfigParser, pec_pass: str, verbose: bool = False) -> smtplib.SMTP:
@@ -59,7 +61,7 @@ def fetch_unseen_mail(imap: imaplib.IMAP4) -> List[Dict]:
     _mail_list = list()
     if ret_code == 'OK':
         for num in messages[0].split():
-            (ret, header_data) = imap.fetch(num, '(BODY[HEADER.FIELDS (SUBJECT FROM REPLY-TO DATE)])')
+            (ret, header_data) = imap.fetch(num, '(BODY[HEADER.FIELDS (MESSAGE-ID SUBJECT FROM REPLY-TO DATE)])')
             if ret == 'OK':
                 header_string = header_data[0][1].decode('utf-8')
                 header = mhp.parsestr(header_string)
@@ -67,6 +69,7 @@ def fetch_unseen_mail(imap: imaplib.IMAP4) -> List[Dict]:
                     msg_datetime = email.utils.parsedate_to_datetime(header['Date'])
                     _mail_list.append(
                         {
+                            'message-id': header['message-id'],
                             'from': email.utils.parseaddr(header['reply-to'])[1],
                             'when': msg_datetime,
                             'sub': header['Subject']
@@ -111,6 +114,7 @@ def send_mail_response(config: ConfigParser, smtp: smtplib.SMTP, mail_list_ok: L
                                        content=msg_content)
         smtp.send_message(mail_message)
 
+
     # check notify
     if (mail_list_ok and len(mail_list_ok) > 0) or (mail_list_ko and len(mail_list_ko) > 0):
 
@@ -134,7 +138,7 @@ def send_mail_response(config: ConfigParser, smtp: smtplib.SMTP, mail_list_ok: L
                     map(lambda x: mt.template_notify_row.format(pec_from=x['from'],
                                                                 pec_when=x['when'].strftime('%Y-%m-%d'),
                                                                 pec_sub=x['sub']
-                                                                ), mail_list_ko)
+                                                                ), mail_list_ok)
                 )
             )
 
@@ -143,6 +147,24 @@ def send_mail_response(config: ConfigParser, smtp: smtplib.SMTP, mail_list_ok: L
                                        recipient=config.get(CONF_SECTION, CONF_NOTIFY_LIST),
                                        content=msg_content_ko + msg_content_ok + mt.template_notify_end)
         smtp.send_message(mail_message)
+
+
+def save_worked_messages(config: ConfigParser, message_list: List[str], verbose: bool = False):
+
+    msg_worked = config.get(CONF_SECTION,CONF_MSG_WORKED_LOC)
+
+    with open(msg_worked, 'a') as f:
+        for m in message_list:
+            f.write(m+'\n')
+
+def worked_messages(config: ConfigParser):
+    msg_worked = config.get(CONF_SECTION, CONF_MSG_WORKED_LOC)
+
+    if os.path.isfile(msg_worked):
+        with open(msg_worked, 'r') as f:
+            return f.readlines()
+    else:
+        return []
 
 
 def mail_message_of(subject: str, sender: str, recipient: str, content: str) -> EmailMessage:
