@@ -26,7 +26,7 @@ template_response_ko = '''
     <p>La comunicazione a mezzo PEC del <strong>{pec_when}</strong> avente oggetto:</p> 
     <p><strong>{pec_sub}</strong></p> 
     <p>non &egrave; stata presa in carico.</p>
-    <p>L'indirizzo mittente <strong>{pec_from}</strong> non risulta essere un indirizzo di un RTD(Responsabile per la Transizione al Digitale) registrato in IPA (Indice dei domicili digitali delle Pubbliche Amministrazioni e dei Gestori di Pubblici Servizi)</p>
+    <p>L'indirizzo mittente <strong>{pec_from}</strong> non risulta essere un indirizzo di un RTD (Responsabile per la Transizione al Digitale) registrato in IPA (Indice dei domicili digitali delle Pubbliche Amministrazioni e dei Gestori di Pubblici Servizi - https://indicepa.gov.it)</p>
     <p>Si prega di utilizzare un indirizzo di un RTD valido.</p>
     <p>Grazie</p>
 </div>

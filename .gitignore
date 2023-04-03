@@ -1,3 +1,4 @@
 .idea
-resource/*
+resource/IPAdatsetRTD.csv
+resource/message_worked.txt
 __pycache__

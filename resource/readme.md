@@ -1,3 +1,5 @@
-# MoDI: managment patterns & profiles
+# Resource Folder
 
-script for authenticating the sender administration of a need request
+Folder to store
+- RTD IPA Dataset (IPAdatasetRTD.csv)
+- List of message-id for processed message (message_worked.txt)
